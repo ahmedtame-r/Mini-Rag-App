@@ -15,7 +15,7 @@ $ conda create -n mini-rag python=3.8
 ```
 3) Activate the environment:
 ```bash
-$ conda activate mini-rag
+$ conda activate mini-rag-app
 ```
 
 ### (Optional) Setup you command line interface for better readability
@@ -44,7 +44,7 @@ Set your environment variables in the `.env` file. Like `OPENAI_API_KEY` value.
 ## Run the FastAPI server
 
 '''bash
-$ uvicorn main:app --reload --host 0.0.0.0 --port 5000
+$ uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
 '''
 
 ## POSTMAN Collaction
