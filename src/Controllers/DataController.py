@@ -1,8 +1,7 @@
 import mimetypes
-
 from fastapi import UploadFile
-
 from src.Controllers.BaseController import BaseController
+from src.models import ResponseSignal
 
 
 class DataController(BaseController):
@@ -22,12 +21,9 @@ class DataController(BaseController):
             content_type, _ = mimetypes.guess_type(file.filename or "")
 
         if content_type not in self.app_settings.FILE_ALLOWED_TYPES:
-            print("❌ Content type not allowed")
-            return False
+            return False, ResponseSignal.FILE_TYPE_NOT_SUPPORTED
 
         if file.size > self.app_settings.FILE_MAX_SIZE * self.size_scale:
-            print("❌ File size is too large")
-            return False
+            return False, ResponseSignal.FILE_SIZE_EXCEEDED
 
-        print("✅ File is valid")
-        return True
+        return True, ResponseSignal.FILE_UPLOADED_SUCCESS
