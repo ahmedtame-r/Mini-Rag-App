@@ -1,0 +1,15 @@
+from src.helpers.config import get_settings, Settings
+import os
+
+class BaseController:
+    
+    def __init__(self):
+        self.app_settings = get_settings()
+        
+        self.base_dir = os.path_dirname(os.path_dirname(__file__)) #get the dir path of src folder
+        
+        self.file_dir = os.path.join(self.base_dir, "assets/files")
+        
+        
+        
+        
