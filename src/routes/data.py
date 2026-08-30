@@ -44,7 +44,7 @@ async def upload_data(project_id: str, file: UploadFile,
     print("PROJECT DIR:", project_dir_path)
     print("FILE NAME:", file.filename)
     
-    file_path = data_controller.generate_unique_filename(origin_file_name=file.filename, project_id=project_id)
+    file_path, file_id = data_controller.generate_unique_filepath(origin_file_name=file.filename, project_id=project_id)
     
     print("FILE PATH:", file_path)
     
@@ -63,7 +63,8 @@ async def upload_data(project_id: str, file: UploadFile,
     
     return JSONResponse(
         content={
-            "signal": ResponseSignal.FILE_UPLOADED_SUCCESS.value
+            "signal": ResponseSignal.FILE_UPLOADED_SUCCESS.value,
+            "file_id": file_id
         }
     )
 
