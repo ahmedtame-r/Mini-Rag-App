@@ -10,6 +10,29 @@ class ChunkModel(BaseDataModel):
         super().__init__(db_client = db_client)
         self.collection = self.db_client[DataBaseEnums.COLLECTION_CHUNK_NAME.value]
         
+    @classmethod
+    ## Used to call the __init__ func & init_collection func
+    ## since we need to make the indexing as soon as name a new project from project model
+    async def create_instance(cls, db_client: object):
+        instance = cls(db_client)   # this one call the __init__
+        await instance.init_collection()
+        return instance
+    
+## this function make the indexing 
+    async def init_collection(self):
+        all_collections = await self.db_client.list_collection_names()
+        
+        if DataBaseEnums.COLLECTION_CHUNK_NAME.value not in all_collections:
+            self.collection = self.db_client[DataBaseEnums.COLLECTION_CHUNK_NAME.value]
+            indexes = DataChunk.get_indexes()
+            
+            for index in indexes:
+                await self.collection.create_index(
+                    index["key"],
+                    name = index["name"],
+                    unique = index["unique"]
+                )
+    
     
     async def create_chunk(self, chunk: DataChunk):
         result = await self.collection.insert_one(chunk.dict(by_alias = True,exclude_unset = True))
