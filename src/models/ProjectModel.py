@@ -40,7 +40,7 @@ class ProjectModel(BaseDataModel):
             exclude_unset = True
         ))  
         
-        project._id = result.inserted_id
+        project.id = result.inserted_id
         
         return project
     
