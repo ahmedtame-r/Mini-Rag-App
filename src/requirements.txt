@@ -11,3 +11,4 @@ motor==3.7.1
 pydantic-mongo==3.1.0
 openai==3.9.0
 cohere==7.1.1
+qdrant-client==1.19.0
