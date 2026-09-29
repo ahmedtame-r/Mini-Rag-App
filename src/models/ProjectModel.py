@@ -3,6 +3,7 @@ from .db_schemes import Project
 from .enums.DataBaseEnums import DataBaseEnums
 
 
+
 class ProjectModel(BaseDataModel):
     def __init__(self, db_client: object):
         super().__init__(db_client=db_client)

@@ -11,7 +11,6 @@ class OpenAIProvider(LLMInterface):
                 default_generation_temperature: float=0.1):
         
         self.api_key = api_key
-        self.api_url = api_url
         
         self.default_input_max_characters = default_input_max_characters
         self.default_generation_max_output_tokens = default_generation_max_output_tokens
@@ -24,15 +23,13 @@ class OpenAIProvider(LLMInterface):
         
         self.client = OpenAI(
             api_key = self.api_key,
-            api_url = self.api_url
         )
         
         self.logger = logging.getLogger(__name__)
         
         
-    def set_generation_model(self, model_id: str, embedding_size: int):  # we made this func instead of add it to __init__ so if the application in the runtime and we need to change generation model
+    def set_generation_model(self, model_id: str):  # we made this func instead of add it to __init__ so if the application in the runtime and we need to change generation model
         self.generation_model_id = model_id
-        self.embedding_size = embedding_size
         
         
     def set_embedding_model(self, model_id: str, embedding_size: int):
@@ -44,13 +41,12 @@ class OpenAIProvider(LLMInterface):
         return text[:self.default_input_max_characters].strip()
         
     
-    def generate_text(self, promote: str, chat_history: list=[] , max_output_tokens: int = None, temperature: float = None):
+    def generate_text(self, prompt: str, chat_history: list=[] , max_output_tokens: int = None, temperature: float = None):
         # raise NotImplementedError                 # used to raise a message to the user that this func has no logic and break the application
 
         if not self.client: 
             self.logger.error("OpenAI client was not set")
             return None
-        
         
         if not self.generation_model_id:
             self.logger.error("Generation model for OpenAI was not set")
@@ -69,17 +65,17 @@ class OpenAIProvider(LLMInterface):
         
         
         response = self.client.chat.completions.create(
-            model = self.generation_model_id,
-            message = chat_history,
-            max_output_tokens = max_output_tokens,
-            temperature = temperature,
+            model=self.generation_model_id,
+            messages=chat_history,
+            max_tokens=max_output_tokens,
+            temperature=temperature,
         )
         
         if not response or not response.choices or len(response.choices) == 0 or not response.choices[0].message:
             self.logger.error("Error while generate text with OpenAI")
             return None
         
-        return response.choices[0].message["content"] 
+        return response.choices[0].message.content
 
     
     def embed_text(self, text: str, document_type: str = None): 

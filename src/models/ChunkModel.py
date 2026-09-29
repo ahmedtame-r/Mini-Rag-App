@@ -41,7 +41,7 @@ class ChunkModel(BaseDataModel):
     
     async def get_chunk(self, chunk_id: str):
         result = await self.collection.find_one({
-            "_id" : ObjectId
+            "_id" : ObjectId(chunk_id)
         })
         
         if result is None:
@@ -54,7 +54,7 @@ class ChunkModel(BaseDataModel):
             batch = chunks[i: i+batch_size]
             
             operation = [
-                InsertOne(chunk.dict())
+                InsertOne(chunk.dict(by_alias=True, exclude_unset=True))
                 for chunk in batch
             ]
             
@@ -68,3 +68,15 @@ class ChunkModel(BaseDataModel):
         })
         
         return result.deleted_count
+    
+    async def get_project_chunks(self, project_id: ObjectId, page_no: int=1, page_size: int=50):
+        records = await self.collection.find({
+                "chunk_project_id": project_id
+            }).skip(
+                (page_no - 1) * page_size
+            ).limit(page_size).to_list(length = None)
+        
+        return [
+            DataChunk(**record)
+            for record in records
+        ]
